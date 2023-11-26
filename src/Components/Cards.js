@@ -5,7 +5,7 @@ class Cards extends Component {
     constructor (){
         super();
         this.state ={
-          NumberofCardstobeDrawn : 0,
+          NumberofCardtoDraw : 0,
           CurrentDeckofCards : 52,
           ToggleSortButton : false,
           DrawCards : [],
@@ -68,7 +68,7 @@ class Cards extends Component {
         this.drawCards = this.drawCards.bind(this);
         this.sortCards = this.sortCards.bind(this);
       }
-      
+
       shiffleCards() {
         let cards = this.state.DeckofCards;
         var counter = cards.length,
@@ -89,14 +89,16 @@ class Cards extends Component {
           inc++;
         }}
         
-        this.setState({ToggleSortButton : false});
-        this.setState({CurrentDeckofCards : 52});
-        this.setState({DrawCards : []});
-        this.setState({DeckofCards : cards});
+        this.setState({ToggleSortButton : false,
+          CurrentDeckofCards : 52,
+          DrawCards : [],
+          DeckofCards : cards,
+        });
       };
 
       drawCards(){
-        if(this.state.NumberofCardstobeDrawn === 0){
+        //return if no value passed from the UI
+        if(this.state.NumberofCardtoDraw === 0){
           return;
         }
 
@@ -110,7 +112,7 @@ class Cards extends Component {
           drawcards = this.state.DrawCards;
         }
 
-        const drawnCards = this.state.CurrentDeckofCards-this.state.NumberofCardstobeDrawn;  
+        const drawnCards = this.state.CurrentDeckofCards-this.state.NumberofCardtoDraw;  
         while (counter > drawnCards) {
           index = Math.floor(Math.random() * counter);
           counter--;
@@ -120,78 +122,75 @@ class Cards extends Component {
           drawcards.push(cards[index]);
         }
 
-        let filteredDOC = this.state.DeckofCards;
+        let filteredDeckofCards = this.state.DeckofCards;
         let incr = 0;
         while(incr<drawcards.length){
-          filteredDOC = filteredDOC.filter(function (item) {
+          filteredDeckofCards = filteredDeckofCards.filter(function (item) {
           return item.id !== drawcards[incr].id;});
           incr++;
         }
 
-        if(drawcards.length>0){
-          this.setState({ToggleSortButton : true});
-        }
-        this.setState({CurrentDeckofCards : drawnCards});
-        this.setState({DrawCards : drawcards});
-        this.setState({DeckofCards : filteredDOC});
+        this.setState({ToggleSortButton : drawcards.length>0,
+          CurrentDeckofCards : drawnCards,
+          DrawCards : drawcards,
+          DeckofCards : filteredDeckofCards,
+        });
       };
 
       sortCards(){
         let cards = this.state.DrawCards;
         let sortedCardList = cards.sort(function(a,b){
-          let x = a.id;
-          let y = b.id;
-          if(x>y){return 1;}
-          if(x<y){return -1;}
+          if(a.id>b.id){return 1;}
+          if(a.id<b.id){return -1;}
           return 0;})
 
           this.setState({DrawCards : sortedCardList});
       };
 
     render(){  
-      const renderDeckofCards = this.state.DeckofCards.map((item, index) => 
-        <div kye={index} className="card">
+      const renderCards = (cards) =>
+        cards.map((item, index) => (
+          <div key={index} className="card">
             <div className="cleft">{item.card}</div>
             <div className="padding3">{item.suit}</div>
             <div className="cright">{item.card}</div>
-        </div>)
+          </div>
+        ));
 
-      let renderDrawCards = [];  
+      const renderDeckofCards = renderCards(this.state.DeckofCards);
+
+      let renderDrawnCards = [];  
       if(this.state.DrawCards !== undefined){
-      renderDrawCards = this.state.DrawCards.map((item, index) => 
-        <div kye={index} className="card">
-            <div className="cleft">{item.card}</div>
-            <div className="padding3">{item.suit}</div>
-            <div className="cright">{item.card}</div>
-        </div>)}
+      renderDrawnCards = renderCards(this.state.DrawCards);
+      }
 
-        const Cards = 
-            <Form>
+      const Cards =
+          <Form>
+            <Row>
+              <Form.Group controlId="formShuffle">
+                <Button onClick={this.shiffleCards}>Shuffle</Button>
+              </Form.Group>
+            </Row>
+            <Row>
+              {renderDeckofCards}
+            </Row>
+            <Row>
+              <Form.Group controlId="formDraw">
+                <Form.Label>Enter number of cards to be drawn from deck</Form.Label>
+                <FormControl type="number" required onChange={event => this.setState({NumberofCardtoDraw: event.target.value})}></FormControl>
+                <Button onClick={this.drawCards}>Draw</Button>
+              </Form.Group>
+            </Row>
+            <Row>
+            <Form.Group controlId="formSort" >
               <Row>
-                <Form.Group controlId="formShuffle">
-                  <Button onClick={this.shiffleCards}>Shuffle</Button>
-                </Form.Group>
+                  {renderDrawnCards}
               </Row>
-              <Row>
-                {renderDeckofCards}
-              </Row>
-              <Row>
-                <Form.Group controlId="formDraw">
-                  <Form.Label>Enter number of cards to be drawn from deck</Form.Label>
-                  <FormControl type="number" required onChange={event => this.setState({NumberofCardstobeDrawn: event.target.value})}></FormControl>
-                  <Button onClick={this.drawCards}>Draw</Button>
-                </Form.Group>
-              </Row>
-              <Row>
-              <Form.Group controlId="formSort" >
-                <Row>
-                    {renderDrawCards}
-                </Row>
-                  {this.state.ToggleSortButton && <Button onClick={this.sortCards}>Sort</Button>}
-                </Form.Group>
-              </Row>
-            </Form>
-        return Cards;
+                {this.state.ToggleSortButton && <Button onClick={this.sortCards}>Sort</Button>}
+              </Form.Group>
+            </Row>
+          </Form>
+      return Cards;
     }
 } 
 
