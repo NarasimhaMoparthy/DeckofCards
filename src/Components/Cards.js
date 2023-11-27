@@ -82,6 +82,7 @@ class Cards extends Component {
           cards[index] = temp;
         }
        
+        //drawn cards are added back to deck 
         if(this.state.DrawCards !== undefined){
         let inc = 0;
         while(inc < this.state.DrawCards.length){
