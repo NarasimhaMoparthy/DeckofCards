@@ -178,7 +178,7 @@ class Cards extends Component {
             <Row>
               <Form.Group controlId="formDraw">
                 <Form.Label>Enter number of cards to be drawn from deck</Form.Label>
-                <FormControl type="number" required onChange={event => this.setState({NumberofCardtoDraw: event.target.value})}></FormControl>
+                <FormControl placeholder="Number" type="number" required onChange={event => this.setState({NumberofCardtoDraw: event.target.value})}></FormControl>
                 <Button onClick={this.drawCards}>Draw</Button>
               </Form.Group>
             </Row>
