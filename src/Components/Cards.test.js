@@ -1,5 +1,4 @@
 import { fireEvent, render, screen} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { act } from 'react-dom/test-utils';
 import Cards from './Cards';
 
@@ -32,7 +31,6 @@ import Cards from './Cards';
 
     const drawButtonElement = screen.getByTestId("drawButton");
     act(() => fireEvent.click(drawButtonElement));
-    //userEvent.click(drawButtonElement)
 
     const sortButton = await screen.getByText("Sort");
     expect(sortButton).toBeInTheDocument();
